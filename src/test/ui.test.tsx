@@ -37,13 +37,25 @@ describe('PART 2: маршруты и авторизация', () => {
     expect(await screen.findByRole('heading', { name: 'Доступ запрещён' })).toBeVisible();
     expect(screen.queryByRole('link', { name: 'Администрирование' })).not.toBeInTheDocument();
   });
-  it('показывает ошибку SSO, затем позволяет войти и выйти', async () => {
+  it('логотип ведёт на поиск из раздела «Мои бронирования»', async () => {
+    await loginAsStudent1();
+    open('/my-bookings');
+    await screen.findByRole('heading', { name: 'Мои бронирования' });
+    await userEvent.click(screen.getByRole('link', { name: /PolyRoomBooking/ }));
+    expect(await screen.findByRole('heading', { name: 'Поиск аудиторий' })).toBeVisible();
+  });
+  it('для гостя логотип ведёт на страницу входа, а не в закрытый поиск', async () => {
+    open('/login');
+    await screen.findByRole('heading', { name: 'Вход в систему' });
+    expect(screen.getByRole('link', { name: /PolyRoomBooking/ })).toHaveAttribute(
+      'href',
+      '/login',
+    );
+  });
+  it('позволяет войти и выйти', async () => {
     open('/login');
     await screen.findByRole('option', { name: /Иванов/ });
-    await userEvent.click(screen.getByLabelText('Симулировать ошибку аутентификации'));
-    await userEvent.click(screen.getByRole('button', { name: 'Войти через СПбПУ (демо)' }));
-    expect(await screen.findByRole('alert')).toHaveTextContent('Не удалось выполнить вход через СПбПУ');
-    await userEvent.click(screen.getByLabelText('Симулировать ошибку аутентификации'));
+    expect(screen.queryByText('Симулировать ошибку аутентификации')).not.toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Войти через СПбПУ (демо)' }));
     await screen.findByRole('heading', { name: 'Поиск аудиторий' });
     await userEvent.click(screen.getByRole('button', { name: 'Выйти' }));

@@ -29,8 +29,8 @@ export function AppLayout() {
     } catch { setError('Не удалось сохранить изменения. Попробуйте ещё раз.'); }
     finally { setBusy(false); }
   }
-  return <><header><div className="header-inner"><NavLink className="brand" to="/search">PolyRoomBooking<span>СПбПУ · 3 корпус</span></NavLink>
+  return <><header><div className="header-inner"><NavLink className="brand" to={user ? '/search' : '/login'}>PolyRoomBooking<span>СПбПУ · 3 корпус</span></NavLink>
     {user && <><nav aria-label="Основная навигация"><NavLink to="/search">Поиск аудиторий</NavLink><NavLink to="/my-bookings">Мои бронирования</NavLink>{user.role === 'admin' && <NavLink to="/admin">Администрирование</NavLink>}</nav><div className="account"><span>{user.fullName}<small>{ROLE_LABELS[user.role]}</small></span><button className="secondary" disabled={busy} onClick={() => void endSession()}>Выйти</button></div></>}
-  </div></header><main className="container"><ErrorNotice message={error} /><Outlet /></main><footer className="container"><span>Бронирование аудиторий · Демонстрационная версия</span><button className="text-button" onClick={() => setReset(true)}>Сбросить демо-данные</button></footer>
+  </div></header><main className="container"><ErrorNotice message={error} /><Outlet /></main><footer className="container"><span>Бронирование аудиторий</span><button className="text-button" onClick={() => setReset(true)}>Сбросить демо-данные</button></footer>
     {reset && <Modal title="Сбросить демо-данные?" busy={busy} onClose={() => setReset(false)}><p>Все изменения и бронирования будут заменены исходными демо-данными. Вы выйдете из учётной записи.</p><button disabled={busy} onClick={() => void endSession(true)}>Подтвердить сброс</button></Modal>}</>;
 }
