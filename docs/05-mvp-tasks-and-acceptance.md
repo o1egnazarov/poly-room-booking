@@ -19,11 +19,11 @@ Execute tasks sequentially. Run `npm test` and `npm run build` after each phase.
 
 # PART 2 — Developer 2 (React UI & Final Verification)
 ## Phase 3: React UI Implementation (Russian, Responsive)
-- [ ] Build `AuthContext`, protected route wrappers (`RequireAuth`, `RequireAdmin`), and responsive `AppLayout` / `Header`.
-- [ ] Build `LoginPage` (`UC-01`).
-- [ ] Build `SearchPage` + Booking Confirmation Modal (`UC-02`, `UC-03`).
-- [ ] Build `MyBookingsPage` (`UC-04`).
-- [ ] Build `AdminPage` with 3 tabs: Аудитории, Все бронирования, Блокировки (`UC-05`).
+- [x] Build `AuthContext`, protected route wrappers (`RequireAuth`, `RequireAdmin`), and responsive `AppLayout` / `Header`.
+- [x] Build `LoginPage` (`UC-01`).
+- [x] Build `SearchPage` + Booking Confirmation Modal (`UC-02`, `UC-03`).
+- [x] Build `MyBookingsPage` (`UC-04`).
+- [x] Build `AdminPage` with 3 tabs: Аудитории, Все бронирования, Блокировки (`UC-05`).
 
 ## Phase 4: Verification & Definition of Done (Acceptance Criteria)
 Before finishing, verify all items pass:
@@ -34,3 +34,28 @@ Before finishing, verify all items pass:
 5. **AC-05 (Own Bookings):** User sees own active bookings and can cancel them; cancelled slot immediately reappears in search. Attempting to cancel another user's booking returns `FORBIDDEN`.
 6. **AC-06 (Admin):** Admin can add/edit/deactivate/activate auditoriums, add/remove room blocks, view all bookings, and cancel any active booking. Changes immediately affect search & availability.
 7. **AC-07 (Persistence & Build):** Reloading the browser preserves bookings and room edits in `localStorage`. `npm test` and `npm run build` pass with zero TypeScript errors.
+
+## Результаты проверки PART 2
+
+Реализованы маршруты `/login`, `/search`, `/my-bookings`, `/admin`, контекст
+авторизации, ограничения доступа, адаптивный русский интерфейс и подтверждения
+изменений. UI использует публичные API `src/modules/*/index.ts`; доменные
+сервисы PART 1 не изменены. Сброс демо-данных использует существующий
+`resetDemoData` и требует подтверждения в интерфейсе.
+
+| Критерий | Автоматическая проверка |
+| --- | --- |
+| AC-01 | `ui.test.tsx`: гостевые маршруты, запрет админ-раздела студенту/преподавателю, ошибка SSO, вход/выход. `administration.test.ts`: RBAC всех административных методов. |
+| AC-02 | `auditoriums.test.ts`, `availability.test.ts`: фильтры, расписание, блокировки, активные брони, неактивные аудитории. `ui.test.tsx`: поиск и обновление выдачи после бронирования/отмены. |
+| AC-03 | `bookingRules.test.ts`, `booking.test.ts`: прошлое время, рабочие часы, горизонт, длительность. `ui.test.tsx`: русские ошибки доменного слоя на странице поиска. |
+| AC-04 | `booking.test.ts`: параллельные попытки, атомарное вытеснение и запреты приоритета. `ui.test.tsx`: свежий конфликт при подтверждении, предупреждение преподавателю и причина отмены у студента. |
+| AC-05 | `booking.test.ts`: собственные брони и запрет отмены чужих. `ui.test.tsx`: подтверждение отмены и повторное появление аудитории в поиске. |
+| AC-06 | `administration.test.ts`: каталог, блокировки, глобальные брони и влияние на поиск. `ui.test.tsx`: создание/редактирование/деактивация аудитории, создание/снятие блокировки, фильтры и отмена чужой брони. |
+| AC-07 | `storage.test.ts`, `seed.test.ts`, `ui.test.tsx`: сохранение данных, повторный запуск без перезаписи сида, восстановление сессии, брони и изменений аудитории. Production-сборка проходит без ошибок TypeScript. |
+
+Результат: `npm test` — **147 тестов в 10 файлах**, `npm run build` — успешно.
+Интеграционные UI-тесты используют реальные сервисы и localStorage в jsdom.
+Повторное монтирование приложения проверяет восстановление данных, но не
+заменяет проверку перезагрузки в настоящем браузере. Визуальная проверка
+мобильной вёрстки, фокуса нативных диалогов и совместимости Chrome/Safari
+в этом окружении не проводилась.

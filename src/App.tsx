@@ -1,29 +1,11 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-
-/**
- * PART 1: только каркас. Реальные страницы (LoginPage, SearchPage,
- * MyBookingsPage, AdminPage) и маршруты появляются в PART 2.
- */
-function Placeholder() {
-  return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-50 p-6">
-      <section className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
-        <h1 className="text-2xl font-semibold text-slate-900">PolyRoomBooking</h1>
-        <p className="mt-3 text-sm leading-6 text-slate-600">
-          Каркас приложения, моковая БД и доменные модули готовы. Интерфейс будет
-          реализован на этапе PART 2.
-        </p>
-      </section>
-    </main>
-  );
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { AuthProvider } from './ui/context/AuthContext';
+import { AppLayout, RequireAdmin, RequireAuth } from './ui/components/AppLayout';
+import LoginPage from './ui/pages/LoginPage';
+import SearchPage from './ui/pages/SearchPage';
+import MyBookingsPage from './ui/pages/MyBookingsPage';
+import AdminPage from './ui/pages/AdminPage';
+export function AppRoutes() {
+  return <AuthProvider><Routes><Route element={<AppLayout />}><Route path="/login" element={<LoginPage />} /><Route element={<RequireAuth />}><Route path="/search" element={<SearchPage />} /><Route path="/my-bookings" element={<MyBookingsPage />} /><Route element={<RequireAdmin />}><Route path="/admin" element={<AdminPage />} /></Route></Route><Route path="*" element={<Navigate to="/search" replace />} /></Route></Routes></AuthProvider>;
 }
-
-export default function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="*" element={<Placeholder />} />
-      </Routes>
-    </BrowserRouter>
-  );
-}
+export default function App() { return <BrowserRouter><AppRoutes /></BrowserRouter>; }
